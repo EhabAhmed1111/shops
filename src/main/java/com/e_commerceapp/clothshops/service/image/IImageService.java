@@ -14,6 +14,6 @@ public interface IImageService {
 
     List <ImageDTO> saveImages(List<MultipartFile> files, Long productId) ;
 
-    void updateImage(Long imageId,MultipartFile file) ;
+    ImageDTO updateImage(Long imageId,MultipartFile file) ;
 
 }
