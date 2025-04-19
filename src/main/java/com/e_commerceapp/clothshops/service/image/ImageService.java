@@ -103,13 +103,14 @@ public class ImageService implements IImageService {
 
     @Override
     @Transactional
-    public void updateImage(Long imageId, MultipartFile file) {
+    public ImageDTO updateImage(Long imageId, MultipartFile file) {
         Image image = getImageById(imageId);
         try {
             image.setFileName(file.getOriginalFilename());
             image.setFileType(file.getContentType());
             image.setImage(new SerialBlob(file.getBytes()));
             imageRepository.save(image);
+            return imageMapper.fromImage(image);
         } catch (IOException | SQLException e) {
             throw new RuntimeException(
                     "Failed to update image" + e.getMessage(), e
