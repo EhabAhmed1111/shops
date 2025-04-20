@@ -97,7 +97,7 @@ public class ProductService implements IProductService {
                 existingProduct -> updateExistingProduct(existingProduct, productDTO)
         ).map(productRepository::save).orElseThrow(
                 () -> new GlobalNotFoundException(
-                        "there is no product with id:" + productId
+                        "there is no product with id: " + productId
                 )
         );
         /*
@@ -129,6 +129,7 @@ public class ProductService implements IProductService {
     @Override
     public List<Product> getAllProducts() {
         return productRepository.findAll();
+//                .stream().map(productMapper::createProductDTOFromProduct).toList();
     }
 
     @Override

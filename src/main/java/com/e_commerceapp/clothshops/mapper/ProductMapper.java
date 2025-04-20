@@ -17,4 +17,15 @@ public class ProductMapper {
                 category
         );
     }
+    public ProductDTO createProductDTOFromProduct(Product request) {
+        return new ProductDTO(
+                request.getId(),
+                request.getName(),
+                request.getBrand(),
+                request.getPrice(),
+                request.getInventory(),
+                request.getDescription(),
+                request.getCategory()
+        );
+    }
 }
