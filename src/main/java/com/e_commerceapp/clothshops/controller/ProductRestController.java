@@ -6,7 +6,6 @@ import com.e_commerceapp.clothshops.exceptionhandler.GlobalNotFoundException;
 import com.e_commerceapp.clothshops.model.Product;
 import com.e_commerceapp.clothshops.response.ApiResponse;
 import com.e_commerceapp.clothshops.service.product.IProductService;
-import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -15,13 +14,16 @@ import java.util.List;
 import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
 import static org.springframework.http.HttpStatus.NOT_FOUND;
 
-@RequiredArgsConstructor
+//@RequiredArgsConstructor
 @RestController
-@RequestMapping("/${api.prefix}/products")
+@RequestMapping("${api.prefix}/products")
 public class ProductRestController {
 
     private final IProductService productService;
 
+    public ProductRestController(IProductService productService) {
+        this.productService = productService;
+    }
 
     @GetMapping("/all")
     public ResponseEntity<ApiResponse> getAllProduct() {
@@ -70,7 +72,7 @@ public class ProductRestController {
         }
     }
 
-    @GetMapping("/by/brandName")
+    @GetMapping("/by-brandName")
     public ResponseEntity<ApiResponse> getAllProductWithBrandName(@RequestParam String brandName) {
         try {
             List<Product> products = productService.getAllProductsByBrandName(brandName);

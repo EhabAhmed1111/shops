@@ -1,13 +1,11 @@
 package com.e_commerceapp.clothshops.controller;
 
 
-import com.e_commerceapp.clothshops.exceptionhandler.AlreadyExistException;
 import com.e_commerceapp.clothshops.exceptionhandler.BadRequestException;
 import com.e_commerceapp.clothshops.exceptionhandler.GlobalNotFoundException;
 import com.e_commerceapp.clothshops.model.Category;
 import com.e_commerceapp.clothshops.response.ApiResponse;
 import com.e_commerceapp.clothshops.service.category.ICategoryService;
-import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -16,12 +14,16 @@ import java.util.List;
 import static org.springframework.http.HttpStatus.CONFLICT;
 import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
 
-@RequiredArgsConstructor
+//@RequiredArgsConstructor
 @RestController
-@RequestMapping("/${api.prefix}/categories")
+@RequestMapping("${api.prefix}/categories")
 public class CategoryRestController {
 
     private final ICategoryService categoryService;
+
+    public CategoryRestController(ICategoryService categoryService) {
+        this.categoryService = categoryService;
+    }
 
     @GetMapping("/all")
     public ResponseEntity<ApiResponse> getAllCategories() {

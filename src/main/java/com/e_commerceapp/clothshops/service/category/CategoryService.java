@@ -4,8 +4,6 @@ import com.e_commerceapp.clothshops.exceptionhandler.AlreadyExistException;
 import com.e_commerceapp.clothshops.exceptionhandler.GlobalNotFoundException;
 import com.e_commerceapp.clothshops.model.Category;
 import com.e_commerceapp.clothshops.repository.CategoryRepository;
-import jakarta.validation.constraints.NotNull;
-import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -14,11 +12,17 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
-@RequiredArgsConstructor
+//@RequiredArgsConstructor
+@Transactional
 public class CategoryService implements ICategoryService {
 
 
     private final CategoryRepository categoryRepository;
+
+    @Autowired
+    public CategoryService(CategoryRepository categoryRepository) {
+        this.categoryRepository = categoryRepository;
+    }
 
     @Override
     public Category getCategoryById(Long categoryId) {
@@ -44,7 +48,6 @@ public class CategoryService implements ICategoryService {
     }
 
     @Override
-    @Transactional
     public Category addCategory(Category category) {
 
         //optional.of is used when we know that value will never be null
@@ -62,7 +65,6 @@ public class CategoryService implements ICategoryService {
     }
 
     @Override
-    @Transactional
     public Category updateCategory(Category category, Long categoryId) {
 
         return Optional.ofNullable(getCategoryById(categoryId)).map(
