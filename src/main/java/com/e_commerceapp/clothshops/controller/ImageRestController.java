@@ -1,12 +1,10 @@
 package com.e_commerceapp.clothshops.controller;
 
-import ch.qos.logback.core.util.StringUtil;
 import com.e_commerceapp.clothshops.dto.ImageDTO;
 import com.e_commerceapp.clothshops.exceptionhandler.GlobalNotFoundException;
 import com.e_commerceapp.clothshops.model.Image;
 import com.e_commerceapp.clothshops.response.ApiResponse;
 import com.e_commerceapp.clothshops.service.image.IImageService;
-import lombok.RequiredArgsConstructor;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.Resource;
 import org.springframework.http.*;
@@ -14,17 +12,23 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
+import java.io.FileInputStream;
 import java.sql.SQLException;
 import java.util.List;
 
 import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
 
-@RequiredArgsConstructor
+//@RequiredArgsConstructor
 @RestController
-@RequestMapping("/${api.prefix}/images")
+@RequestMapping("${api.prefix}/images")
 public class ImageRestController {
 
     private final IImageService imageService;
+
+    public ImageRestController(IImageService imageService) {
+        this.imageService = imageService;
+    }
 
     @PostMapping("/upload")
     public ResponseEntity<ApiResponse> saveImages(@RequestParam List<MultipartFile> files, @RequestParam Long productId) {
@@ -40,23 +44,29 @@ public class ImageRestController {
 
     @GetMapping("/image/download/{imageId}")
     public ResponseEntity<Resource> downloadImage(@PathVariable Long imageId) {
+        //can be done in another method
         try {
             Image image = imageService.getImageById(imageId);
 
-            ByteArrayResource resources = new ByteArrayResource(image.getImage().getBytes(1, (int) image.getImage().length()));
-
+            File file = new File(image.getDownloadUrl());
+            FileInputStream fin = new FileInputStream(file);
+            byte [] bytes = new byte[(int) file.length()];
+           fin.read(bytes);
+            ByteArrayResource resources = new ByteArrayResource(bytes);
+//
             String safeFileName = StringUtils.cleanPath(image.getFileName());
             ContentDisposition disposition = ContentDisposition.attachment().filename(safeFileName).build();
 
+            fin.close();
             return ResponseEntity.ok().contentType(MediaType.parseMediaType(image.getFileType())) // set MIME type ex(image/Png)
                     .header(HttpHeaders.CONTENT_DISPOSITION,
-                            disposition.toString()
-//                            "attachment; filename=\"" + image.getFileName() + "\""
+//                            disposition.toString()
+                            "attachment; filename=\"" + image.getFileName() + "\""
                     )
                     .body(resources);
-        } catch (SQLException e) {
+        } catch (Exception e) {
             throw new GlobalNotFoundException(
-                    "there is no image"
+                    "there is no image" + e.getMessage()
             );
         }
     }

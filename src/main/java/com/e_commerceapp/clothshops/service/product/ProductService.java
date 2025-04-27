@@ -1,13 +1,13 @@
 package com.e_commerceapp.clothshops.service.product;
 
+import com.e_commerceapp.clothshops.dto.ProductDTO;
 import com.e_commerceapp.clothshops.exceptionhandler.GlobalNotFoundException;
 import com.e_commerceapp.clothshops.mapper.ProductMapper;
 import com.e_commerceapp.clothshops.model.Category;
 import com.e_commerceapp.clothshops.model.Product;
 import com.e_commerceapp.clothshops.repository.CategoryRepository;
 import com.e_commerceapp.clothshops.repository.ProductRepository;
-import com.e_commerceapp.clothshops.dto.ProductDTO;
-import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -17,7 +17,8 @@ import java.util.Optional;
 @Service
 //this generates constructor for final or not null fields
 //suitable for inject dep
-@RequiredArgsConstructor
+//@RequiredArgsConstructor
+@Transactional
 public class ProductService implements IProductService {
 
 
@@ -30,8 +31,14 @@ public class ProductService implements IProductService {
 
     private final ProductMapper productMapper;
 
+    @Autowired
+    public ProductService(ProductRepository productRepository, CategoryRepository categoryRepository, ProductMapper productMapper) {
+        this.productRepository = productRepository;
+        this.categoryRepository = categoryRepository;
+        this.productMapper = productMapper;
+    }
+
     @Override
-    @Transactional
     public Product addProduct(ProductDTO productDTO) {
         //check if category is found in the DB
         //if yes, set it as new product category
@@ -67,7 +74,6 @@ public class ProductService implements IProductService {
     }
 
     @Override
-    @Transactional
     public void deleteProductById(Long productId) {
         productRepository.findById(productId)
                 .ifPresentOrElse(productRepository::delete,
@@ -86,7 +92,6 @@ public class ProductService implements IProductService {
     }
 
     @Override
-    @Transactional
     public Product updateProduct(ProductDTO productDTO, Long productId) {
 //        Product product = productRepository.findById(productId).orElseThrow(
 //                () -> new GlobalNotFoundException("there is no product with id:" + productId)
