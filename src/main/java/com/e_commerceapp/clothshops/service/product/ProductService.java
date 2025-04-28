@@ -7,6 +7,7 @@ import com.e_commerceapp.clothshops.model.Category;
 import com.e_commerceapp.clothshops.model.Product;
 import com.e_commerceapp.clothshops.repository.CategoryRepository;
 import com.e_commerceapp.clothshops.repository.ProductRepository;
+import com.e_commerceapp.clothshops.requests.ProductRequests;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -39,15 +40,15 @@ public class ProductService implements IProductService {
     }
 
     @Override
-    public Product addProduct(ProductDTO productDTO) {
+    public Product addProduct(ProductRequests productRequests) {
         //check if category is found in the DB
         //if yes, set it as new product category
         //if no, then save it as a new category
         //then set it as a new product category.
         Category category = Optional.ofNullable(categoryRepository
-                .findByName(productDTO.getCategory().getName())).orElseGet(
+                .findByName(productRequests.getCategory().getName())).orElseGet(
                 () -> {
-                    Category newCategory = new Category(productDTO.getCategory().getName());
+                    Category newCategory = new Category(productRequests.getCategory().getName());
                     return categoryRepository.save(newCategory);
                 }
         );
@@ -59,8 +60,8 @@ public class ProductService implements IProductService {
         product will take it as a setCategory
         all of this if category you're asking is not exist
          */
-        productDTO.setCategory(category);
-        return productRepository.save(productMapper.createProductFromProductDTO(productDTO, category));
+        productRequests.setCategory(category);
+        return productRepository.save(productMapper.createProductFromProductReq(productRequests));
     }
 
 
@@ -92,14 +93,14 @@ public class ProductService implements IProductService {
     }
 
     @Override
-    public Product updateProduct(ProductDTO productDTO, Long productId) {
+    public ProductDTO updateProduct(ProductRequests productRequests, Long productId) {
 //        Product product = productRepository.findById(productId).orElseThrow(
 //                () -> new GlobalNotFoundException("there is no product with id:" + productId)
 //        );
 //    return updateExistingProduct(product,productDTO).map(productRepository::save);
-        return productRepository.findById(productId).map(
+        Product product = productRepository.findById(productId).map(
                 //existingProduct is the one that will found from findById
-                existingProduct -> updateExistingProduct(existingProduct, productDTO)
+                existingProduct -> updateExistingProduct(existingProduct, productRequests)
         ).map(productRepository::save).orElseThrow(
                 () -> new GlobalNotFoundException(
                         "there is no product with id: " + productId
@@ -111,19 +112,20 @@ public class ProductService implements IProductService {
         it mean
         .map(updatedProduct -> productRepository.save(updatedProduct))
          */
+        return productMapper.createProductDTOFromProduct(product);
     }
 
     private Product updateExistingProduct(
             Product existingProduct,
-            ProductDTO productDTO
+            ProductRequests productRequests
     ) {
-        existingProduct.setName(productDTO.getName());
-        existingProduct.setBrand(productDTO.getBrand());
-        existingProduct.setPrice(productDTO.getPrice());
-        existingProduct.setInventory(productDTO.getInventory());
-        existingProduct.setDescription(productDTO.getDescription());
+        existingProduct.setName(productRequests.getName());
+        existingProduct.setBrand(productRequests.getBrand());
+        existingProduct.setPrice(productRequests.getPrice());
+        existingProduct.setInventory(productRequests.getInventory());
+        existingProduct.setDescription(productRequests.getDescription());
 
-        Category category = categoryRepository.findByName(productDTO.getCategory().getName());
+        Category category = categoryRepository.findByName(productRequests.getCategory().getName());
         existingProduct.setCategory(category);
 
 //        existingProduct = productMapper.createProductFromProductDTO(productDTO, category);
@@ -132,39 +134,46 @@ public class ProductService implements IProductService {
     }
 
     @Override
-    public List<Product> getAllProducts() {
-        return productRepository.findAll();
+    public List<ProductDTO> getAllProducts() {
+        List<Product> products =  productRepository.findAll();
+        return productMapper.createListOfProductDTOFromListOfProduct(products);
 //                .stream().map(productMapper::createProductDTOFromProduct).toList();
     }
 
     @Override
-    public List<Product> getAllProductsByCategoryName(String categoryName) {
-        return productRepository.findByCategoryName(categoryName);
+    public List<ProductDTO> getAllProductsByCategoryName(String categoryName) {
+        List<Product> products = productRepository.findByCategoryName(categoryName);
+        return productMapper.createListOfProductDTOFromListOfProduct(products);
     }
 
     @Override
-    public List<Product> getAllProductsByBrandName(String brandName) {
-        return productRepository.findByBrand(brandName);
+    public List<ProductDTO> getAllProductsByBrandName(String brandName) {
+        List<Product> products = productRepository.findByBrand(brandName);
+        return productMapper.createListOfProductDTOFromListOfProduct(products);
     }
 
     @Override
-    public List<Product> getAllProductsByCategoryNameAndBrandName(String categoryName, String brandName) {
-        return productRepository.findByCategoryNameAndBrand(categoryName, brandName);
+    public List<ProductDTO> getAllProductsByCategoryNameAndBrandName(String categoryName, String brandName) {
+        List<Product> products = productRepository.findByCategoryNameAndBrand(categoryName, brandName);
+        return productMapper.createListOfProductDTOFromListOfProduct(products);
     }
 
     @Override
-    public List<Product> getProductsByName(String productName) {
-        return productRepository.findByName(productName);
+    public List<ProductDTO> getProductsByName(String productName) {
+        List<Product> products = productRepository.findByName(productName);
+        return productMapper.createListOfProductDTOFromListOfProduct(products);
     }
 
     @Override
-    public List<Product> getProductsByBrandNameAndProductName(String productName, String brandName) {
-        return productRepository.findByBrandAndName(productName, brandName);
+    public List<ProductDTO> getProductsByBrandNameAndProductName(String productName, String brandName) {
+        List<Product> products = productRepository.findByBrandAndName(productName, brandName);
+        return productMapper.createListOfProductDTOFromListOfProduct(products);
     }
 
     @Override
-    public List<Product> getProductsByCategoryNameAndProductName(String productName, String categoryName) {
-        return productRepository.findByCategoryNameAndName(categoryName, productName);
+    public List<ProductDTO> getProductsByCategoryNameAndProductName(String productName, String categoryName) {
+        List<Product> products = productRepository.findByCategoryNameAndName(categoryName, productName);
+        return productMapper.createListOfProductDTOFromListOfProduct(products);
     }
 
     @Override
