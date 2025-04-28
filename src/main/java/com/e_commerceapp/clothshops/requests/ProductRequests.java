@@ -1,18 +1,10 @@
-package com.e_commerceapp.clothshops.dto;
+package com.e_commerceapp.clothshops.requests;
 
 import com.e_commerceapp.clothshops.model.Category;
-import jakarta.persistence.CascadeType;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
 
 import java.math.BigDecimal;
-import java.util.List;
 
-//Data annotation is used to get getter and setter immediately
-//@Data
-//@AllArgsConstructor
-public class ProductDTO {
-
+public class ProductRequests {
     private Long id;
     private String name;
     private String brand;
@@ -20,9 +12,8 @@ public class ProductDTO {
     private int inventory; //quantity
     private String description;
     private Category category;
-    private List<ImageDTO> imageDTOList;
 
-    public ProductDTO(Long id, String name, String brand, BigDecimal price, int inventory, String description, Category category, List<ImageDTO> imageDTOList) {
+    public ProductRequests(Long id, String name, String brand, BigDecimal price, int inventory, String description, Category category) {
         this.id = id;
         this.name = name;
         this.brand = brand;
@@ -30,7 +21,6 @@ public class ProductDTO {
         this.inventory = inventory;
         this.description = description;
         this.category = category;
-        this.imageDTOList = imageDTOList;
     }
 
     public Long getId() {
@@ -87,13 +77,5 @@ public class ProductDTO {
 
     public void setCategory(Category category) {
         this.category = category;
-    }
-
-    public List<ImageDTO> getImageDTOList() {
-        return imageDTOList;
-    }
-
-    public void setImageDTOList(List<ImageDTO> imageDTOList) {
-        this.imageDTOList = imageDTOList;
     }
 }

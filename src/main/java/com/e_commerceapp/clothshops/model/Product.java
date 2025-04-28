@@ -1,5 +1,6 @@
 package com.e_commerceapp.clothshops.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
 import java.math.BigDecimal;
@@ -40,6 +41,7 @@ public class Product {
 
      No need to manually delete it from the ImageRepository
      */
+
     @OneToMany(mappedBy = "product",cascade = CascadeType.ALL,orphanRemoval = true)
     private List<Image> images;
 

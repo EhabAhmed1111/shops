@@ -1,5 +1,6 @@
 package com.e_commerceapp.clothshops.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
 import java.sql.Blob;
@@ -25,6 +26,7 @@ public class Image {
 
     private String downloadUrl;
 
+    @JsonIgnore
     @ManyToOne()
     @JoinColumn(name = "product_id")
     private Product product;
