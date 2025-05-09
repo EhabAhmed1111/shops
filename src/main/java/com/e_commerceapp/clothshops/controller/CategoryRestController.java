@@ -31,7 +31,7 @@ public class CategoryRestController {
             List<Category> categories = categoryService.getAllCategory();
             return ResponseEntity.ok(new ApiResponse("Found!", categories));
         } catch (Exception e) {
-            return ResponseEntity.status(INTERNAL_SERVER_ERROR).body(new ApiResponse("Error:", INTERNAL_SERVER_ERROR));
+            return ResponseEntity.status(INTERNAL_SERVER_ERROR).body(new ApiResponse(e.getMessage(), INTERNAL_SERVER_ERROR));
 //            throw new RuntimeException(e.getMessage(),e);
         }
     }

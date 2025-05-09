@@ -1,6 +1,7 @@
 package com.e_commerceapp.clothshops.model;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
 import java.math.BigDecimal;
@@ -8,6 +9,8 @@ import java.math.BigDecimal;
 @Entity
 public class CartItem {
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     private BigDecimal unitePrice;
@@ -16,12 +19,17 @@ public class CartItem {
 
     private int quantity;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(
+//            fetch = FetchType.LAZY
+    )
     @JoinColumn(name = "product_id")
     private Product product;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(
+//            fetch = FetchType.LAZY
+    )
     @JoinColumn(name = "cart_id")
+    @JsonIgnore
     private Cart cart;
 
     public CartItem() {
