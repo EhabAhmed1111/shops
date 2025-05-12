@@ -161,4 +161,12 @@ public class CartService {
                 .findFirst()
                 .orElseThrow(() -> new GlobalNotFoundException("there is no cartItem with id: " + cartItemId));
     }
+
+    public Cart getCartByUserId(Long userId) {
+        return cartRepository.findByUserId(userId).orElseThrow(
+                () -> new GlobalNotFoundException(
+                        "there is no cart attached to user with id: " + userId
+                )
+        );
+    }
 }
