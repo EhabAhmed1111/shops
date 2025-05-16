@@ -8,7 +8,6 @@ import com.e_commerceapp.clothshops.model.User;
 import com.e_commerceapp.clothshops.repository.CartItemRepository;
 import com.e_commerceapp.clothshops.repository.CartRepository;
 import com.e_commerceapp.clothshops.service.product.IProductService;
-import org.hibernate.mapping.Any;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -20,7 +19,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.math.BigDecimal;
 import java.util.HashSet;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 
@@ -93,13 +91,10 @@ class CartServiceTest {
         //given
         Long id = 1L;
         Cart expectiedCart = new Cart();
-        expectiedCart.setId(1L);
+        expectiedCart.setId(id);
 
         //when
-//        when(cartService.getCart(Mockito.any())).thenReturn(expectiedCart);
-        /*
-        you cant do this because you still testing cart service
-         */
+
         when(cartRepository.findById(Mockito.any())).thenReturn(Optional.of(expectiedCart));
         underTest.clearCart(expectiedCart.getId());
 
@@ -116,13 +111,10 @@ class CartServiceTest {
         //given
         Long id = 1L;
         Cart expectiedCart = new Cart();
-        expectiedCart.setId(1L);
+        expectiedCart.setId(id);
 
         //when
-//        when(cartService.getCart(Mockito.any())).thenReturn(expectiedCart);
-        /*
-        you cant do this because you still testing cart service
-         */
+
         when(cartRepository.findById(Mockito.any())).thenReturn(Optional.of(expectiedCart));
         underTest.clearCart(expectiedCart.getId());
 
@@ -135,89 +127,141 @@ class CartServiceTest {
     @Test
     void updateCart_ShouldThrowExceptionIfCartNotThere() {
 //        given
-            Long cartId = 1L;
-            Long productId = 1L;
+        Long cartId = 1L;
+        Long productId = 1L;
 
-            Product product = new Product();
-            product.setId(productId);
+        Product product = new Product();
+        product.setId(productId);
 
 //        when
         when(cartRepository.findById(cartId)).thenReturn(Optional.empty());
 
 
 //        then
-        assertThatThrownBy(() -> underTest.updateCartItemQuantity(cartId,product.getId(),1))
+        assertThatThrownBy(() -> underTest.updateCartItemQuantity(cartId, product.getId(), 1))
                 .isInstanceOf(GlobalNotFoundException.class)
-                .hasMessageContaining( "there is no cart with id: " + cartId);
+                .hasMessageContaining("there is no cart with id: " + cartId);
 
 
     }
+
     @Test
     void updateCart_ShouldUpdateQuantityIfCartItemInCart() {
 //        given
-            Long cartId = 1L;
-            Long productId = 1L;
+        Long productId = 1L;
+        Long expectedId = 1L;
+        Long cartItemId = 1L;
+        Cart cart = new Cart();
+        CartItem cartItem = new CartItem();
+        cartItem.setId(cartItemId);
+        cart.setId(expectedId);
+        Product product = new Product();
+        product.setId(productId);
 
-            Product product = new Product();
-            product.setId(productId);
+        product.setPrice(new BigDecimal(300));
+        int quantity = 2;
+        int oldQuantity = 5;
+        cartItem.setProduct(product);
+        cartItem.setQuantity(oldQuantity);
+        cartItem.setUnitePrice(product.getPrice());
+        cart.addItem(cartItem);
 
 //        when
-        when(cartRepository.findById(cartId)).thenReturn(Optional.empty());
+        when(cartRepository.findById(cart.getId())).thenReturn(Optional.of(cart));
 
+        underTest.updateCartItemQuantity(cart.getId(), product.getId(), quantity);
 
 //        then
+        assertThat(cartItem.getQuantity()).isEqualTo(quantity);
 
 
     }
-@Test
+
+    @Test
     void updateCart_ShouldThrowExceptionIfCartItemNotInCart() {
 //        given
-            Long cartId = 1L;
-            Long productId = 1L;
+        Long productId = 1L;
+        Long expectedId = 1L;
+        Cart cart = new Cart();
+        cart.setId(expectedId);
+        Product product = new Product();
+        product.setId(productId);
+        product.setPrice(new BigDecimal(300));
+        int quantity = 2;
 
-            Product product = new Product();
-            product.setId(productId);
 
 //        when
-        when(cartRepository.findById(cartId)).thenReturn(Optional.empty());
+        when(cartRepository.findById(cart.getId())).thenReturn(Optional.of(cart));
 
 
 //        then
+        assertThatThrownBy(() -> underTest.updateCartItemQuantity(cart.getId(), product.getId(), quantity))
+                .isInstanceOf(GlobalNotFoundException.class)
+                .hasMessageContaining("there is no product with id: " + product.getId() + " in cart with id: " + cart.getId());
 
 
     }
+
     @Test
     void updateCart_ShouldRecalculateTotalPriceAfterUpdateQuantity() {
 //        given
-            Long cartId = 1L;
-            Long productId = 1L;
-
-            Product product = new Product();
-            product.setId(productId);
+        Long productId = 1L;
+        Long expectedId = 1L;
+        Long cartItemId = 1L;
+        Cart cart = new Cart();
+        CartItem cartItem = new CartItem();
+        cartItem.setId(cartItemId);
+        cart.setId(expectedId);
+        Product product = new Product();
+        product.setId(productId);
+        product.setPrice(new BigDecimal(300));
+        int quantity = 2;
+        int oldQuantity = 5;
+        cartItem.setProduct(product);
+        cartItem.setQuantity(oldQuantity);
+        cartItem.setUnitePrice(product.getPrice());
+        cart.addItem(cartItem);
 
 //        when
-        when(cartRepository.findById(cartId)).thenReturn(Optional.empty());
+        when(cartRepository.findById(cart.getId())).thenReturn(Optional.of(cart));
 
+        underTest.updateCartItemQuantity(cart.getId(), product.getId(), quantity);
 
+        BigDecimal expectedTotalPrice = cart.getItems().stream().map(item ->
+             item.getUnitePrice().multiply(BigDecimal.valueOf(item.getQuantity()))
+        ).reduce(BigDecimal.ZERO, BigDecimal::add);
 //        then
-
+        assertThat(cart.getTotalPrice()).isEqualTo(expectedTotalPrice);
 
     }
-    @Test
-    void updateCart_ShouldCheckIfFindByIdCalledOnce() {
-//        given
-            Long cartId = 1L;
-            Long productId = 1L;
 
-            Product product = new Product();
-            product.setId(productId);
+    @Test
+    void updateCart_ShouldCheckIfCartSavedOnceIfCartThere() {
+//        given
+        Long productId = 1L;
+        Long expectedId = 1L;
+        Long cartItemId = 1L;
+        Cart cart = new Cart();
+        CartItem cartItem = new CartItem();
+        cartItem.setId(cartItemId);
+        cart.setId(expectedId);
+        Product product = new Product();
+        product.setId(productId);
+        product.setPrice(new BigDecimal(300));
+        int quantity = 2;
+        int oldQuantity = 5;
+        cartItem.setProduct(product);
+        cartItem.setQuantity(oldQuantity);
+        cartItem.setUnitePrice(product.getPrice());
+        cart.addItem(cartItem);
 
 //        when
-        when(cartRepository.findById(cartId)).thenReturn(Optional.empty());
-
-
+        when(cartRepository.findById(cart.getId())).thenReturn(Optional.of(cart));
+        underTest.updateCartItemQuantity(cart.getId(), product.getId(), quantity);
+        ArgumentCaptor<Cart> cartArgumentCaptor = ArgumentCaptor.forClass(Cart.class);
 //        then
-
+        verify(cartRepository, times(1)).save(cartArgumentCaptor.capture());
+        assertThat(cart).isEqualTo(cartArgumentCaptor.getValue());
 
     }
 
@@ -265,7 +309,7 @@ class CartServiceTest {
     void addCartItemToCart_ShouldInitiateNewCartIfIdNull() {
         //given
         Long productId = 1L;
-        Long expectedId = 1L;
+//        Long expectedId = 1L;
         Product product = new Product();
         product.setId(productId);
 //        product.setInventory(5);
@@ -339,7 +383,7 @@ class CartServiceTest {
     void addCartItemToCart_ShouldCallGetProductById() {
         //given
         Long productId = 1L;
-        Long expectedId = 1L;
+//        Long expectedId = 1L;
         Product product = new Product();
         product.setId(productId);
 //        product.setInventory(5);
@@ -388,7 +432,7 @@ class CartServiceTest {
         underTest.addCartItemToCart(cart.getId(), product.getId(), quantity);
         int sizeOfCartAfter = cart.getItems().size();
         //then
-        assertThat(sizeOfCartBefore == sizeOfCartAfter + 1);
+        assertThat( sizeOfCartAfter).isEqualTo( sizeOfCartBefore+ 1);
 //        assertThat(cart.getItems().stream().filter(item -> {
 //            return item.getProduct().equals(product);
 //        }).findFirst()).isNotNull();
@@ -480,8 +524,7 @@ class CartServiceTest {
         //when
         underTest.addCartItemToCart(cart.getId(), product.getId(), quantity);
         //then
-        assertThat(Objects.equals(cart.getTotalPrice(),
-                cartItem.getUnitePrice().multiply(BigDecimal.valueOf(quantity + oldQuantity))));
+        assertThat(cart.getTotalPrice()).isEqualTo(cartItem.getUnitePrice().multiply(BigDecimal.valueOf(quantity + oldQuantity)));
 //        assertThat(cart.getItems().stream().filter(item -> {
 //            return item.getProduct().equals(product);
 //        }).findFirst()).isNotNull();
@@ -512,7 +555,7 @@ class CartServiceTest {
         when(cartRepository.findById(cart.getId())).thenReturn(Optional.of(cart));
 
         //when//then
-        assertThatThrownBy(() -> underTest.addCartItemToCart(cart.getId(),productId,quantity))
+        assertThatThrownBy(() -> underTest.addCartItemToCart(cart.getId(), productId, quantity))
                 .isInstanceOf(GlobalNotFoundException.class)
                 .hasMessageContaining("there is no product with id:" + productId);
 
@@ -538,7 +581,7 @@ class CartServiceTest {
 //        product.setName("phone");
         product.setPrice(new BigDecimal(300));
         int quantity = 2;
-        int oldQuantity = 5;
+//        int oldQuantity = 5;
 //        cartItem.setProduct(product);
 //        cartItem.setQuantity(oldQuantity);
 //        cartItem.setUnitePrice(new BigDecimal(300));
@@ -637,11 +680,6 @@ class CartServiceTest {
     }
 
     @Test
-    @Disabled
-    void updateCartItemQuantity() {
-    }
-
-    @Test
 //    @Disabled
     void shouldGetCartItemFromCartIfItFoundCallFindById() {
         //given
@@ -732,7 +770,6 @@ class CartServiceTest {
         Long userId = 1L;
         User user = new User();
         user.setId(userId);
-//        user.setCart(expectiedCart);
 
         //when
         when(cartRepository.findByUserId(user.getId())).thenReturn(Optional.empty());
