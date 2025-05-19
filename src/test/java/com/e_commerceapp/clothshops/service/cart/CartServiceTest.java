@@ -31,7 +31,7 @@ class CartServiceTest {
 
 
     @InjectMocks
-    private CartService underTest;
+    private CartService cartService;
 
     @Mock
     private CartRepository cartRepository;
@@ -46,20 +46,22 @@ class CartServiceTest {
     @Test
 //    @Disabled
     void ifGetCartCallFindById() {
-        //given
+         //arrange
         Long id = 1L;
         Cart expectiedCart = new Cart();
-        expectiedCart.setId(1L);
-
-        //when
+        expectiedCart.setId(id);
         when(cartRepository.findById(id)).thenReturn(Optional.of(expectiedCart));
-        Cart cart = underTest.getCart(id);
+
+         //act
+         Cart cart =  cartService.getCart(id);
+
+         //assert
         ArgumentCaptor<Long> idArgCaptor = ArgumentCaptor.forClass(Long.class);
 
-        //then
-        verify(cartRepository).findById(idArgCaptor.capture());
+        // no need to test that its called
+//        verify(cartRepository).findById(idArgCaptor.capture());
 
-        assertThat(id).isEqualTo(idArgCaptor.getValue());
+        assertThat(cart).isEqualTo(expectiedCart);
 
     }
 
@@ -69,14 +71,14 @@ class CartServiceTest {
         //given
         Long id = 1L;
         Cart expectiedCart = new Cart();
-        expectiedCart.setId(1L);
+        expectiedCart.setId(id);
 
 //        given(cartRepository.findById(id)).willReturn(Optional.empty());
         when(cartRepository.findById(Mockito.any())).thenReturn(Optional.empty());
 
         //when
         //then
-        assertThatThrownBy(() -> underTest.getCart(id))
+        assertThatThrownBy(() -> cartService.getCart(id))
                 .isInstanceOf(GlobalNotFoundException.class)
                 .hasMessageContaining("there is no cart with id: " + id);
 
@@ -96,7 +98,7 @@ class CartServiceTest {
         //when
 
         when(cartRepository.findById(Mockito.any())).thenReturn(Optional.of(expectiedCart));
-        underTest.clearCart(expectiedCart.getId());
+        cartService.clearCart(expectiedCart.getId());
 
 
         //then
@@ -116,7 +118,7 @@ class CartServiceTest {
         //when
 
         when(cartRepository.findById(Mockito.any())).thenReturn(Optional.of(expectiedCart));
-        underTest.clearCart(expectiedCart.getId());
+        cartService.clearCart(expectiedCart.getId());
 
 
         //then
@@ -138,7 +140,7 @@ class CartServiceTest {
 
 
 //        then
-        assertThatThrownBy(() -> underTest.updateCartItemQuantity(cartId, product.getId(), 1))
+        assertThatThrownBy(() -> cartService.updateCartItemQuantity(cartId, product.getId(), 1))
                 .isInstanceOf(GlobalNotFoundException.class)
                 .hasMessageContaining("there is no cart with id: " + cartId);
 
@@ -169,7 +171,7 @@ class CartServiceTest {
 //        when
         when(cartRepository.findById(cart.getId())).thenReturn(Optional.of(cart));
 
-        underTest.updateCartItemQuantity(cart.getId(), product.getId(), quantity);
+        cartService.updateCartItemQuantity(cart.getId(), product.getId(), quantity);
 
 //        then
         assertThat(cartItem.getQuantity()).isEqualTo(quantity);
@@ -195,7 +197,7 @@ class CartServiceTest {
 
 
 //        then
-        assertThatThrownBy(() -> underTest.updateCartItemQuantity(cart.getId(), product.getId(), quantity))
+        assertThatThrownBy(() -> cartService.updateCartItemQuantity(cart.getId(), product.getId(), quantity))
                 .isInstanceOf(GlobalNotFoundException.class)
                 .hasMessageContaining("there is no product with id: " + product.getId() + " in cart with id: " + cart.getId());
 
@@ -225,7 +227,7 @@ class CartServiceTest {
 //        when
         when(cartRepository.findById(cart.getId())).thenReturn(Optional.of(cart));
 
-        underTest.updateCartItemQuantity(cart.getId(), product.getId(), quantity);
+        cartService.updateCartItemQuantity(cart.getId(), product.getId(), quantity);
 
         BigDecimal expectedTotalPrice = cart.getItems().stream().map(item ->
              item.getUnitePrice().multiply(BigDecimal.valueOf(item.getQuantity()))
@@ -257,7 +259,7 @@ class CartServiceTest {
 
 //        when
         when(cartRepository.findById(cart.getId())).thenReturn(Optional.of(cart));
-        underTest.updateCartItemQuantity(cart.getId(), product.getId(), quantity);
+        cartService.updateCartItemQuantity(cart.getId(), product.getId(), quantity);
         ArgumentCaptor<Cart> cartArgumentCaptor = ArgumentCaptor.forClass(Cart.class);
 //        then
         verify(cartRepository, times(1)).save(cartArgumentCaptor.capture());
@@ -275,7 +277,7 @@ class CartServiceTest {
 
         //when
         when(cartRepository.findById(id)).thenReturn(Optional.of(expectiedCart));
-        underTest.getTotalPrice(expectiedCart.getId());
+        cartService.getTotalPrice(expectiedCart.getId());
         //then
         verify(cartRepository).findById(expectiedCart.getId());
 
@@ -295,7 +297,7 @@ class CartServiceTest {
         //when
 
         when(cartRepository.findById(id)).thenReturn(Optional.of(expectiedCart));
-        BigDecimal actualTotalPrice = underTest.getTotalPrice(expectiedCart.getId());
+        BigDecimal actualTotalPrice = cartService.getTotalPrice(expectiedCart.getId());
 
         //then
 
@@ -324,7 +326,7 @@ class CartServiceTest {
 //            return cart;
 //        });
         //when
-        underTest.addCartItemToCart(null, product.getId(), quantity);
+        cartService.addCartItemToCart(null, product.getId(), quantity);
 
         //then
         //for initialize
@@ -362,7 +364,7 @@ class CartServiceTest {
 //            return cart;
 //        });
         //when
-        underTest.addCartItemToCart(cart.getId(), product.getId(), quantity);
+        cartService.addCartItemToCart(cart.getId(), product.getId(), quantity);
 
         //then
         //cart already there
@@ -398,7 +400,7 @@ class CartServiceTest {
 //            return cart;
 //        });
         //when
-        underTest.addCartItemToCart(null, product.getId(), quantity);
+        cartService.addCartItemToCart(null, product.getId(), quantity);
 
         //then
         verify(productService).getProductById(productId);
@@ -429,7 +431,7 @@ class CartServiceTest {
 //        });
         //when
         int sizeOfCartBefore = cart.getItems().size();
-        underTest.addCartItemToCart(cart.getId(), product.getId(), quantity);
+        cartService.addCartItemToCart(cart.getId(), product.getId(), quantity);
         int sizeOfCartAfter = cart.getItems().size();
         //then
         assertThat( sizeOfCartAfter).isEqualTo( sizeOfCartBefore+ 1);
@@ -476,7 +478,7 @@ class CartServiceTest {
 //            return cart;
 //        });
         //when
-        underTest.addCartItemToCart(cart.getId(), product.getId(), quantity);
+        cartService.addCartItemToCart(cart.getId(), product.getId(), quantity);
         //then
         assertThat(cartItem.getQuantity()).isEqualTo(oldQuantity + quantity);
 //        assertThat(cart.getItems().stream().filter(item -> {
@@ -522,7 +524,7 @@ class CartServiceTest {
 //            return cart;
 //        });
         //when
-        underTest.addCartItemToCart(cart.getId(), product.getId(), quantity);
+        cartService.addCartItemToCart(cart.getId(), product.getId(), quantity);
         //then
         assertThat(cart.getTotalPrice()).isEqualTo(cartItem.getUnitePrice().multiply(BigDecimal.valueOf(quantity + oldQuantity)));
 //        assertThat(cart.getItems().stream().filter(item -> {
@@ -555,7 +557,7 @@ class CartServiceTest {
         when(cartRepository.findById(cart.getId())).thenReturn(Optional.of(cart));
 
         //when//then
-        assertThatThrownBy(() -> underTest.addCartItemToCart(cart.getId(), productId, quantity))
+        assertThatThrownBy(() -> cartService.addCartItemToCart(cart.getId(), productId, quantity))
                 .isInstanceOf(GlobalNotFoundException.class)
                 .hasMessageContaining("there is no product with id:" + productId);
 
@@ -595,7 +597,7 @@ class CartServiceTest {
 //            return cart;
 //        });
         //when
-        underTest.addCartItemToCart(cart.getId(), product.getId(), quantity);
+        cartService.addCartItemToCart(cart.getId(), product.getId(), quantity);
 
         //then
 
@@ -627,9 +629,9 @@ class CartServiceTest {
 
         //when
         when(cartRepository.findById(expectiedCart.getId())).thenReturn(Optional.of(expectiedCart));
-        underTest.removeCartItemFromCart(expectiedCart.getId(), expectedCartItem.getId());
+        cartService.removeCartItemFromCart(expectiedCart.getId(), expectedCartItem.getId());
         //then
-        assertThatThrownBy(() -> underTest.removeCartItemFromCart(expectiedCart.getId(), expectedCartItem.getId()))
+        assertThatThrownBy(() -> cartService.removeCartItemFromCart(expectiedCart.getId(), expectedCartItem.getId()))
                 .isInstanceOf(GlobalNotFoundException.class)
                 .hasMessageContaining("there is no cartItem with id: " + expectedCartItem.getId());
 
@@ -649,7 +651,7 @@ class CartServiceTest {
 
         //when
         when(cartRepository.findById(expectiedCart.getId())).thenReturn(Optional.of(expectiedCart));
-        underTest.removeCartItemFromCart(expectiedCart.getId(), expectedCartItem.getId());
+        cartService.removeCartItemFromCart(expectiedCart.getId(), expectedCartItem.getId());
 
         //then
         //first in same method
@@ -671,7 +673,7 @@ class CartServiceTest {
 
         //when
         when(cartRepository.findById(expectiedCart.getId())).thenReturn(Optional.of(expectiedCart));
-        underTest.removeCartItemFromCart(expectiedCart.getId(), expectedCartItem.getId());
+        cartService.removeCartItemFromCart(expectiedCart.getId(), expectedCartItem.getId());
 
         //then
         //first in same method
@@ -693,7 +695,7 @@ class CartServiceTest {
 
         //when
         when(cartRepository.findById(Mockito.any())).thenReturn(Optional.of(expectiedCart));
-        underTest.getCartItemFromCartIfItFound(cartItemId, expectiedCart.getId());
+        cartService.getCartItemFromCartIfItFound(cartItemId, expectiedCart.getId());
 
         //then
 
@@ -714,7 +716,7 @@ class CartServiceTest {
 
         //when
         when(cartRepository.findById(Mockito.any())).thenReturn(Optional.of(expectiedCart));
-        CartItem actualCartItem = underTest.getCartItemFromCartIfItFound(cartItemId, expectiedCart.getId());
+        CartItem actualCartItem = cartService.getCartItemFromCartIfItFound(cartItemId, expectiedCart.getId());
 
         //then
         assertThat(expectedCartItem).isEqualTo(actualCartItem);
@@ -738,7 +740,7 @@ class CartServiceTest {
 
 
         //then
-        assertThatThrownBy(() -> underTest.getCartItemFromCartIfItFound(expectedCartItem.getId(), cartId))
+        assertThatThrownBy(() -> cartService.getCartItemFromCartIfItFound(expectedCartItem.getId(), cartId))
                 .isInstanceOf(GlobalNotFoundException.class)
                 .hasMessageContaining("there is no cartItem with id: " + cartItemId);
     }
@@ -756,7 +758,7 @@ class CartServiceTest {
 
         //when
         when(cartRepository.findByUserId(user.getId())).thenReturn(Optional.of(expectiedCart));
-        Cart actualCart = underTest.getCartByUserId(user.getId());
+        Cart actualCart = cartService.getCartByUserId(user.getId());
         //then
         assertThat(actualCart).isEqualTo(expectiedCart);
     }
@@ -775,7 +777,7 @@ class CartServiceTest {
         when(cartRepository.findByUserId(user.getId())).thenReturn(Optional.empty());
 
         //then
-        assertThatThrownBy(() -> underTest.getCartByUserId(user.getId()))
+        assertThatThrownBy(() -> cartService.getCartByUserId(user.getId()))
                 .isInstanceOf(GlobalNotFoundException.class)
                 .hasMessageContaining("there is no cart attached to user with id: " + user.getId());
     }
