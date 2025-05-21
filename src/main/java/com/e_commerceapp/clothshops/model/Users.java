@@ -6,7 +6,8 @@ import org.hibernate.annotations.NaturalId;
 import java.util.List;
 
 @Entity
-public class User {
+//@Table(name = "users")
+public class Users {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -25,13 +26,13 @@ public class User {
     private Cart cart;
 
     @OneToMany(mappedBy = "user",cascade = CascadeType.ALL,orphanRemoval = true)
-    private List<Order> orders;
+    private List<Orders> orders;
 
 
-    public User() {
+    public Users() {
     }
 
-    public User(Long id, String firstName, String lastName, String email, String password, Cart cart, List<Order> orders) {
+    public Users(Long id, String firstName, String lastName, String email, String password, Cart cart, List<Orders> orders) {
         this.id = id;
         this.firstName = firstName;
         this.lastName = lastName;
@@ -89,11 +90,11 @@ public class User {
         this.cart = cart;
     }
 
-    public List<Order> getOrders() {
+    public List<Orders> getOrders() {
         return orders;
     }
 
-    public void setOrders(List<Order> orders) {
+    public void setOrders(List<Orders> orders) {
         this.orders = orders;
     }
 }

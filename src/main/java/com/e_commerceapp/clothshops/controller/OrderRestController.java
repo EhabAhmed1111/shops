@@ -3,7 +3,7 @@ package com.e_commerceapp.clothshops.controller;
 
 import com.e_commerceapp.clothshops.dto.OrderDTO;
 import com.e_commerceapp.clothshops.mapper.OrderMapper;
-import com.e_commerceapp.clothshops.model.Order;
+import com.e_commerceapp.clothshops.model.Orders;
 import com.e_commerceapp.clothshops.response.ApiResponse;
 import com.e_commerceapp.clothshops.service.order.OrderService;
 import org.springframework.http.HttpStatus;
@@ -30,7 +30,7 @@ public class OrderRestController {
     //should this become pathVariable or RequestParam
     public ResponseEntity<ApiResponse> createOrder(@RequestParam Long userId) {
         try {
-            Order order = orderService.placeOrder(userId);
+            Orders order = orderService.placeOrder(userId);
             return ResponseEntity.ok(new ApiResponse("order placed", order));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
