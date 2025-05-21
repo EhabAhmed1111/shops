@@ -7,7 +7,7 @@ import jakarta.persistence.*;
 import java.math.BigDecimal;
 
 @Entity
-public class CartItem {
+public class CartItem s{
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
