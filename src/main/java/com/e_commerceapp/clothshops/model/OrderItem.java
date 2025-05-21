@@ -24,19 +24,19 @@ public class OrderItem {
     @ManyToOne()
     @JoinColumn(name = "order_id")
     @JsonIgnore
-    private Order order;
+    private Orders order;
 
     public OrderItem() {
     }
 
-    public OrderItem(Order order, Product product, BigDecimal price, int quantity) {
+    public OrderItem(Orders order, Product product, BigDecimal price, int quantity) {
         this.order = order;
         this.product = product;
         this.price = price;
         this.quantity = quantity;
     }
 
-    public OrderItem(Long id, int quantity, BigDecimal price, Product product, Order order) {
+    public OrderItem(Long id, int quantity, BigDecimal price, Product product, Orders order) {
         this.id = id;
         this.quantity = quantity;
         this.price = price;
@@ -76,11 +76,11 @@ public class OrderItem {
         this.product = product;
     }
 
-    public Order getOrder() {
+    public Orders getOrder() {
         return order;
     }
 
-    public void setOrder(Order order) {
+    public void setOrder(Orders order) {
         this.order = order;
     }
 }

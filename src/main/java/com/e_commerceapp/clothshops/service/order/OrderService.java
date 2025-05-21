@@ -5,10 +5,9 @@ import com.e_commerceapp.clothshops.enums.OrderStatus;
 import com.e_commerceapp.clothshops.exceptionhandler.GlobalNotFoundException;
 import com.e_commerceapp.clothshops.mapper.OrderMapper;
 import com.e_commerceapp.clothshops.model.Cart;
-import com.e_commerceapp.clothshops.model.Order;
 import com.e_commerceapp.clothshops.model.OrderItem;
+import com.e_commerceapp.clothshops.model.Orders;
 import com.e_commerceapp.clothshops.model.Product;
-import com.e_commerceapp.clothshops.repository.OrderItemRepository;
 import com.e_commerceapp.clothshops.repository.OrderRepository;
 import com.e_commerceapp.clothshops.repository.ProductRepository;
 import com.e_commerceapp.clothshops.service.cart.CartService;
@@ -35,25 +34,25 @@ public class OrderService {
     }
 
 
-    public Order placeOrder(Long userId) {
+    public Orders placeOrder(Long userId) {
 
         Cart cart = cartService.getCartByUserId(userId);
 
-        Order order = createOrder(cart);
+        Orders order = createOrder(cart);
 
         List<OrderItem> orderItemList = createOrderItems(order, cart);
         order.setOrderItems(new HashSet<>(orderItemList));
 
         order.setTotalPrice(getTotalPrice(orderItemList));
 
-        Order savedOrder = orderRepository.save(order);
+        Orders savedOrder = orderRepository.save(order);
         cartService.clearCart(cart.getId());
 
         return savedOrder;
     }
 
-    private Order createOrder(Cart cart) {
-        Order order = new Order();
+    private Orders createOrder(Cart cart) {
+        Orders order = new Orders();
         order.setUser(cart.getUser());
         order.setOrderStatus(OrderStatus.PENDING);
         order.setOrderDate(LocalDate.now());
@@ -63,7 +62,7 @@ public class OrderService {
 
     }
 
-    private List<OrderItem> createOrderItems(Order order, Cart cart) {
+    private List<OrderItem> createOrderItems(Orders order, Cart cart) {
         return cart.getItems().stream().map(
                 item -> {
                     Product product = item.getProduct();
@@ -99,7 +98,7 @@ public class OrderService {
                 .stream().map(this::convertToDTO).toList();
     }
 
-    private OrderDTO convertToDTO(Order order) {
+    private OrderDTO convertToDTO(Orders order) {
 
         return orderMapper.createOrderDTOFromOrder(order);
     }

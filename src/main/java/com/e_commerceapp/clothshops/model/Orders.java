@@ -9,7 +9,9 @@ import java.util.HashSet;
 import java.util.Set;
 
 @Entity
-public class Order {
+//@Table(name = "orders")
+//we add (s) because order is a keyword in postgres
+public class Orders {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -27,12 +29,12 @@ public class Order {
 
     @ManyToOne
     @JoinColumn(name = "user_id")
-    private User user;
+    private Users user;
 
-    public Order() {
+    public Orders() {
     }
 
-    public Order(Long id, LocalDate orderDate, BigDecimal totalPrice, OrderStatus orderStatus, Set<OrderItem> orderItems, User user) {
+    public Orders(Long id, LocalDate orderDate, BigDecimal totalPrice, OrderStatus orderStatus, Set<OrderItem> orderItems, Users user) {
         this.id = id;
         this.orderDate = orderDate;
         this.totalPrice = totalPrice;
@@ -41,7 +43,7 @@ public class Order {
         this.user = user;
     }
 
-    public Order(Long id, LocalDate orderDate, BigDecimal totalPrice, OrderStatus orderStatus, Set<OrderItem> orderItems) {
+    public Orders(Long id, LocalDate orderDate, BigDecimal totalPrice, OrderStatus orderStatus, Set<OrderItem> orderItems) {
         this.id = id;
         this.orderDate = orderDate;
         this.totalPrice = totalPrice;
@@ -77,11 +79,11 @@ public class Order {
         return orderStatus;
     }
 
-    public User getUser() {
+    public Users getUser() {
         return user;
     }
 
-    public void setUser(User user) {
+    public void setUser(Users user) {
         this.user = user;
     }
 

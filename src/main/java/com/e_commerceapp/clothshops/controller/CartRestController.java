@@ -3,7 +3,6 @@ package com.e_commerceapp.clothshops.controller;
 import com.e_commerceapp.clothshops.model.Cart;
 import com.e_commerceapp.clothshops.response.ApiResponse;
 import com.e_commerceapp.clothshops.service.cart.CartService;
-import org.springframework.http.HttpEntity;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 

@@ -2,13 +2,12 @@ package com.e_commerceapp.clothshops.mapper;
 
 
 import com.e_commerceapp.clothshops.dto.OrderDTO;
-import com.e_commerceapp.clothshops.model.Order;
-import com.e_commerceapp.clothshops.model.User;
+import com.e_commerceapp.clothshops.model.Orders;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.Mappings;
 
-@Mapper(componentModel = "spring", uses = {OrderMapper.class})
+@Mapper(componentModel = "spring", uses = {OrderItemMapper.class})
 public interface OrderMapper {
 
     @Mappings({
@@ -16,7 +15,7 @@ public interface OrderMapper {
             @Mapping(source = "orderStatus", target = "orderStatus"),
             @Mapping(source = "orderItems", target = "orderItemDTOS")
     })
-    OrderDTO createOrderDTOFromOrder(Order order);
+    OrderDTO createOrderDTOFromOrder(Orders order);
 }
 
 

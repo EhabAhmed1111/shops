@@ -4,7 +4,6 @@ import jakarta.persistence.*;
 
 import java.math.BigDecimal;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 @Entity
@@ -24,12 +23,12 @@ public class Cart {
 
     @OneToOne
     @JoinColumn(name = "user_id")
-    private User user;
+    private Users user;
 
     public Cart() {
     }
 
-    public Cart(Long id, BigDecimal totalPrice, Set<CartItem> items, User user) {
+    public Cart(Long id, BigDecimal totalPrice, Set<CartItem> items, Users user) {
         this.id = id;
         this.totalPrice = totalPrice;
         this.items = items;
@@ -93,11 +92,11 @@ public class Cart {
         this.items = items;
     }
 
-    public User getUser() {
+    public Users getUser() {
         return user;
     }
 
-    public void setUser(User user) {
+    public void setUser(Users user) {
         this.user = user;
     }
 }

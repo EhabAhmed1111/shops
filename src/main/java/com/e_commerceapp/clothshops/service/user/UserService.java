@@ -3,7 +3,8 @@ package com.e_commerceapp.clothshops.service.user;
 import com.e_commerceapp.clothshops.dto.UserDTO;
 import com.e_commerceapp.clothshops.exceptionhandler.AlreadyExistException;
 import com.e_commerceapp.clothshops.exceptionhandler.GlobalNotFoundException;
-import com.e_commerceapp.clothshops.model.User;
+import com.e_commerceapp.clothshops.mapper.UserMapper;
+import com.e_commerceapp.clothshops.model.Users;
 import com.e_commerceapp.clothshops.repository.UserRepository;
 import com.e_commerceapp.clothshops.requests.CreateUserReq;
 import com.e_commerceapp.clothshops.requests.UserUpdateReq;
@@ -16,24 +17,28 @@ public class UserService {
 
     private final UserRepository userRepository;
 
-    public UserService(UserRepository userRepository) {
+    private final UserMapper userMapper;
+
+    public UserService(UserRepository userRepository, UserMapper userMapper) {
         this.userRepository = userRepository;
+        this.userMapper = userMapper;
     }
 
-    public User getUserById(Long userId) {
-        return userRepository.findById(userId).orElseThrow(
+    public UserDTO getUserById(Long userId) {
+         return userRepository.findById(userId).map(userMapper::createUserDtoFromUserEntity).orElseThrow(
                 () -> new GlobalNotFoundException(
                         "there is no user with id: " + userId
                 )
         );
+//        return userMapper.createUserDtoFromUserEntity(user);
     }
 
-    public User createUser(CreateUserReq createUserReq) {
+    public UserDTO createUser(CreateUserReq createUserReq) {
 
-        return Optional.of(createUserReq)
+        Users createdUser =  Optional.of(createUserReq)
                 .filter(request -> !userRepository.existsByEmail(request.getEmail()))
                 .map(req -> {
-                    User user = new User();
+                    Users user = new Users();
                     user.setFirstName(req.getFirstName());
                     user.setLastName(req.getLastName());
                     user.setEmail(req.getEmail());
@@ -45,11 +50,11 @@ public class UserService {
                                 "there is a user with email: " + createUserReq.getEmail()
                         )
                 );
-
+        return userMapper.createUserDtoFromUserEntity(createdUser);
     }
 
-    public User updateUser(UserUpdateReq userUpdateReq, Long userId) {
-        return userRepository.findById(userId).map(user -> {
+    public UserDTO updateUser(UserUpdateReq userUpdateReq, Long userId) {
+        Users updatedUser = userRepository.findById(userId).map(user -> {
             user.setFirstName(userUpdateReq.getFirstName());
             user.setLastName(userUpdateReq.getLastName());
             return userRepository.save(user);
@@ -58,6 +63,7 @@ public class UserService {
                         "there is no user with Id: " + userId
                 )
         );
+        return userMapper.createUserDtoFromUserEntity(updatedUser);
     }
 
 
