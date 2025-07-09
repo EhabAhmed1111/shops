@@ -55,6 +55,7 @@ public class ImageService implements IImageService {
     @Override
     public void deleteImageById(Long imageId) {
         imageRepository.findById(imageId).ifPresentOrElse(image -> {
+            //this will get the file in os
             File file = new File(image.getDownloadUrl());
             file.delete();
         }, () -> {
@@ -112,6 +113,7 @@ public class ImageService implements IImageService {
 //            image.setImage(new SerialBlob(file.getBytes()));
             String downloadUrl = buildDownloadUrl + image.getFileName();
             image.setDownloadUrl(downloadUrl);
+            //here it will start write image in path you give
             FileOutputStream fou = new FileOutputStream(downloadUrl);
             fou.write(file.getBytes());
             fou.flush();
@@ -130,11 +132,13 @@ public class ImageService implements IImageService {
             image.setFileName(file.getOriginalFilename());
             image.setFileType(file.getContentType());
 //            image.setImage(new SerialBlob(file.getBytes()));
-            File file1 = new File(image.getDownloadUrl());
-            file1.delete();
+            //the process is to delete the previous file and write new one
+            File existedFile = new File(image.getDownloadUrl());
+            existedFile.delete();
             image.setDownloadUrl(downloadUrl);
             FileOutputStream fou = new FileOutputStream(downloadUrl);
             fou.write(file.getBytes());
+            //to clean the channel
             fou.flush();
             fou.close();
             imageRepository.save(image);

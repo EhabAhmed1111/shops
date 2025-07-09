@@ -15,12 +15,14 @@ public class Cart {
 
     private BigDecimal totalPrice = BigDecimal.ZERO;
 
-    //    int Quantity;
 
     // OrphanRemoval will delete ant cart item that is not attached to any cart
+    //we make it set so there will be no redundancy
     @OneToMany(mappedBy = "cart", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<CartItem> items = new HashSet<>();
 
+
+    //each user has one cart
     @OneToOne
     @JoinColumn(name = "user_id")
     private Users user;

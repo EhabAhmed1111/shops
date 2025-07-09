@@ -55,7 +55,7 @@ public class CategoryService implements ICategoryService {
         return Optional.of(category)
                 //if category exist then we filter it
                 //and then the value will be null and will go to exception
-                .filter(c -> !categoryRepository.existsByName(c.getName())).map(
+                .filter(theAddedCategory -> !categoryRepository.existsByName(theAddedCategory.getName())).map(
                         categoryRepository::save
                 ).orElseThrow(
                         () -> new AlreadyExistException(
