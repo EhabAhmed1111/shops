@@ -13,22 +13,28 @@ public class CartItem {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    //the price of each product
     private BigDecimal unitePrice;
 
+    //the total price of each cartItem
     private BigDecimal totalPrice;
 
     private int quantity;
 
+    //uni direction relation
     @ManyToOne(
 //            fetch = FetchType.LAZY
     )
+    //this will be written in the table that will take foreign key
     @JoinColumn(name = "product_id")
     private Product product;
 
     @ManyToOne(
 //            fetch = FetchType.LAZY
     )
+    //this will be written in the table that will take foreign key
     @JoinColumn(name = "cart_id")
+    //to prevent recursion
     @JsonIgnore
     private Cart cart;
 

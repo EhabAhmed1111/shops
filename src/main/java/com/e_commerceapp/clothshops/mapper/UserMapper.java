@@ -8,4 +8,5 @@ import org.mapstruct.Mapper;
 public interface UserMapper {
 
     UserDTO createUserDtoFromUserEntity(Users user);
+    Users createUserEntityFromUserDto(UserDTO user);
 }

@@ -10,4 +10,5 @@ public interface CartMapper {
 
 //    @Mapping(source = "items", target = "items")
     CartDTO createCartDtoFromCartEntity(Cart cart);
+    Cart createCartEntityFromCartDto(CartDTO cart);
 }

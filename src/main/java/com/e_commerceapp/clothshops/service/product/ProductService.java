@@ -46,6 +46,7 @@ public class ProductService implements IProductService {
         //if no, then save it as a new category
         //then set it as a new product category.
         Category category = Optional.ofNullable(categoryRepository
+                //orElseGet this mean if cat not there do something
                 .findByName(productRequests.getCategory().getName())).orElseGet(
                 () -> {
                     Category newCategory = new Category(productRequests.getCategory().getName());

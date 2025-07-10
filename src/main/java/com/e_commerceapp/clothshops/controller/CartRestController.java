@@ -3,6 +3,7 @@ package com.e_commerceapp.clothshops.controller;
 import com.e_commerceapp.clothshops.model.Cart;
 import com.e_commerceapp.clothshops.response.ApiResponse;
 import com.e_commerceapp.clothshops.service.cart.CartService;
+import org.apache.catalina.User;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -51,10 +52,16 @@ public class CartRestController {
 
     //done
     @PostMapping("/add")
-    public ResponseEntity<ApiResponse> addItemToCartIfExistIfNotCreateNewOne(@RequestParam(required = false) Long cartId,
+    public ResponseEntity<ApiResponse> addItemToCartIfExistIfNotCreateNewOne(@RequestParam Long userId,
                                                                              @RequestParam Long productId,
                                                                              @RequestParam int quantity) {
-        cartService.addCartItemToCart(cartId, productId, quantity);
+        //he got user and then path it to method
+        //the method initialize new cart if there is no one
+//        User user = userService.getUserById(1L);
+//        Cart cart = cartService.initializeCart(user);
+
+        //then he make add cart with cartId that he will take after return cart
+        cartService.addCartItemToCart(userId, productId, quantity);
         return ResponseEntity.ok(new ApiResponse("add success", null));
 
     }

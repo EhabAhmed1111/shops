@@ -1,16 +1,23 @@
 package com.e_commerceapp.clothshops.service.cart;
 
+import com.e_commerceapp.clothshops.dto.CartDTO;
+import com.e_commerceapp.clothshops.dto.UserDTO;
 import com.e_commerceapp.clothshops.exceptionhandler.GlobalNotFoundException;
+import com.e_commerceapp.clothshops.mapper.CartMapper;
+import com.e_commerceapp.clothshops.mapper.UserMapper;
 import com.e_commerceapp.clothshops.model.Cart;
 import com.e_commerceapp.clothshops.model.CartItem;
 import com.e_commerceapp.clothshops.model.Product;
 import com.e_commerceapp.clothshops.repository.CartItemRepository;
 import com.e_commerceapp.clothshops.repository.CartRepository;
+import com.e_commerceapp.clothshops.repository.UserRepository;
 import com.e_commerceapp.clothshops.service.product.IProductService;
+import com.e_commerceapp.clothshops.service.user.UserService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.util.Optional;
 
 @Service
 @Transactional
@@ -22,10 +29,22 @@ public class CartService {
 
     private final IProductService productService;
 
-    public CartService(CartRepository cartRepository, CartItemRepository cartItemRepository, IProductService productService) {
+    private final UserService userService;
+
+    private final UserMapper userMapper;
+
+    private final UserRepository userRepository;
+
+    private final CartMapper cartMapper;
+
+    public CartService(CartRepository cartRepository, CartItemRepository cartItemRepository, IProductService productService, UserRepository userRepository, UserService userService, UserMapper userMapper, UserRepository userRepository1, CartMapper cartMapper) {
         this.cartRepository = cartRepository;
         this.cartItemRepository = cartItemRepository;
         this.productService = productService;
+        this.userService = userService;
+        this.userMapper = userMapper;
+        this.userRepository = userRepository1;
+        this.cartMapper = cartMapper;
     }
 
 
@@ -52,7 +71,32 @@ public class CartService {
     }
 
 
-    public void addCartItemToCart(Long cartId, Long productId, int quantity) {
+
+    //TODO(There is an error here we need to handle it)
+    // It show that the cart is not attach to user
+
+
+    //here he path user and take id from him
+ public Cart initializeCart(Long userId){
+//    UserDTO user = userService.getUserById(userId);
+//        CartDTO cart = new CartDTO();
+//        user.setCart(cart);
+//     cartRepository.save(cartMapper.createCartEntityFromCartDto(cart));
+//     userRepository.save(userMapper.createUserEntityFromUserDto(user));
+//     return cart;
+     return Optional.ofNullable(getCartByUserId(userId)).orElseGet(
+             ()->{
+                 Cart cart = new Cart();
+                 cart.setUser(userMapper.createUserEntityFromUserDto(userService.getUserById(userId)));
+                 return cartRepository.save(cart);
+             });
+ }
+
+    public Cart getCartByUserId(Long userId) {
+        return cartRepository.findByUserId(userId);
+    }
+
+    public void addCartItemToCart(Long userId, Long productId, int quantity) {
          /*
         1. Get the cart with given id (done)
         2. Get the product (done)
@@ -60,14 +104,20 @@ public class CartService {
         4. If yes, then increase the quantity with the requested quantity
         5. If no. then initiate a new CartItem entry.
          */
-        Cart cart;
+        Cart cart  = initializeCart(userId);
+//        if (userService.getUserById(userId).getCart() == null){
+//            cart =initializeCart(userId);
+//        }else {
+//            cart = getCartByUserId(userId);
+////            cartMapper.createCartEntityFromCartDto(userService.getUserById(userId).getCart());
+//        }
 
-        if (cartId == null) {
-            cart = new Cart();
-            cartRepository.save(cart);
-        } else {
-            cart = getCart(cartId);
-        }
+//        if (cartId == null) {
+//            cart = new Cart();
+//            cartRepository.save(cart);
+//        } else {
+//            cart = getCart(cartId);
+//        }
         Product product = productService.getProductById(productId);
 
 
@@ -162,11 +212,5 @@ public class CartService {
                 .orElseThrow(() -> new GlobalNotFoundException("there is no cartItem with id: " + cartItemId));
     }
 
-    public Cart getCartByUserId(Long userId) {
-        return cartRepository.findByUserId(userId).orElseThrow(
-                () -> new GlobalNotFoundException(
-                        "there is no cart attached to user with id: " + userId
-                )
-        );
-    }
+
 }

@@ -49,11 +49,14 @@ public class ImageRestController {
             Image image = imageService.getImageById(imageId);
 
             File file = new File(image.getDownloadUrl());
+            //used to read file bit by bit
             FileInputStream fin = new FileInputStream(file);
             byte [] bytes = new byte[(int) file.length()];
+            //here it will read and put it in bytes array
            fin.read(bytes);
+           //the return type is resource
             ByteArrayResource resources = new ByteArrayResource(bytes);
-//
+//for safe download
             String safeFileName = StringUtils.cleanPath(image.getFileName());
             ContentDisposition disposition = ContentDisposition.attachment().filename(safeFileName).build();
 
