@@ -1,6 +1,7 @@
 package com.e_commerceapp.clothshops.service.product;
 
 import com.e_commerceapp.clothshops.dto.ProductDTO;
+import com.e_commerceapp.clothshops.exceptionhandler.AlreadyExistException;
 import com.e_commerceapp.clothshops.exceptionhandler.GlobalNotFoundException;
 import com.e_commerceapp.clothshops.mapper.ProductMapper;
 import com.e_commerceapp.clothshops.model.Category;
@@ -22,7 +23,7 @@ import java.util.Optional;
 @Transactional
 public class ProductService implements IProductService {
 
-
+//TODO (WE NEED TO MAKE NOTE THAT PRODUCT IS OUT OF STACK FOR CHECKING)
 
     private final ProductRepository productRepository;
 
@@ -45,6 +46,10 @@ public class ProductService implements IProductService {
         //if yes, set it as new product category
         //if no, then save it as a new category
         //then set it as a new product category.
+        if (checkIfProductAlreadyExist(productRequests.getBrand(), productRequests.getName())) {
+            throw new AlreadyExistException("there is a product with name: " + productRequests.getName() +
+                    " and brand: " + productRequests.getBrand() + ", you may update this product instead!");
+        }
         Category category = Optional.ofNullable(categoryRepository
                 //orElseGet this mean if cat not there do something
                 .findByName(productRequests.getCategory().getName())).orElseGet(
@@ -65,6 +70,9 @@ public class ProductService implements IProductService {
         return productRepository.save(productMapper.createProductFromProductReq(productRequests));
     }
 
+    private boolean checkIfProductAlreadyExist(String productBrand, String productName) {
+        return productRepository.existsByBrandAndName(productBrand, productName);
+    }
 
     @Override
     public Product getProductById(Long productId) {
@@ -136,7 +144,7 @@ public class ProductService implements IProductService {
 
     @Override
     public List<ProductDTO> getAllProducts() {
-        List<Product> products =  productRepository.findAll();
+        List<Product> products = productRepository.findAll();
         return productMapper.createListOfProductDTOFromListOfProduct(products);
 //                .stream().map(productMapper::createProductDTOFromProduct).toList();
     }

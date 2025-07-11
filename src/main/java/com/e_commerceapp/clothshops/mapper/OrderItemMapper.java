@@ -5,6 +5,7 @@ import com.e_commerceapp.clothshops.model.OrderItem;
 import com.e_commerceapp.clothshops.model.Product;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
+import org.mapstruct.Mappings;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -12,8 +13,12 @@ import java.util.List;
 @Mapper(componentModel = "spring")
 public interface OrderItemMapper {
 
-    @Mapping(source ="product.id" ,target = "productId")
-    @Mapping(source ="product.name" ,target = "productName")
+
+    @Mappings({
+            @Mapping(source ="product.id" ,target = "productId"),
+            @Mapping(source ="product.name" ,target = "productName"),
+            @Mapping(source ="product.brand" ,target = "productBrand")
+    })
     OrderItemDTO createOrderItemDTO(OrderItem orderItem);
 
 

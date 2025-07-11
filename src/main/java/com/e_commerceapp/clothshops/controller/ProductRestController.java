@@ -2,6 +2,7 @@ package com.e_commerceapp.clothshops.controller;
 
 
 import com.e_commerceapp.clothshops.dto.ProductDTO;
+import com.e_commerceapp.clothshops.exceptionhandler.AlreadyExistException;
 import com.e_commerceapp.clothshops.exceptionhandler.GlobalNotFoundException;
 import com.e_commerceapp.clothshops.model.Product;
 import com.e_commerceapp.clothshops.requests.ProductRequests;
@@ -12,8 +13,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
-import static org.springframework.http.HttpStatus.NOT_FOUND;
+import static org.springframework.http.HttpStatus.*;
 
 //@RequiredArgsConstructor
 @RestController
@@ -165,9 +165,9 @@ public class ProductRestController {
         try {
             Product product = productService.addProduct(productRequests);
             return ResponseEntity.ok(new ApiResponse("Add product success", product));
-        } catch (Exception e) {
+        } catch (AlreadyExistException e) {
 //            throw new RuntimeException("failed",e);
-            return ResponseEntity.status(INTERNAL_SERVER_ERROR).body(new ApiResponse("Failed to add product due to " + e.getMessage(), INTERNAL_SERVER_ERROR));
+            return ResponseEntity.status(CONFLICT).body(new ApiResponse("Failed to add product due to " + e.getMessage(), CONFLICT));
         }
 
     }

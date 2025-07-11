@@ -60,7 +60,7 @@ public class CartRestController {
 //        User user = userService.getUserById(1L);
 //        Cart cart = cartService.initializeCart(user);
 
-        //then he make add cart with cartId that he will take after return cart
+        //then he makes add cart with cartId that he will take after return cart
         cartService.addCartItemToCart(userId, productId, quantity);
         return ResponseEntity.ok(new ApiResponse("add success", null));
 

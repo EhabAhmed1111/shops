@@ -1,6 +1,7 @@
 package com.e_commerceapp.clothshops.model;
 
 import com.e_commerceapp.clothshops.enums.OrderStatus;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
 import java.math.BigDecimal;
@@ -29,6 +30,7 @@ public class Orders {
 
     @ManyToOne
     @JoinColumn(name = "user_id")
+//    @JsonIgnore
     private Users user;
 
     public Orders() {

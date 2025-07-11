@@ -8,6 +8,16 @@ public class OrderItemDTO {
     private BigDecimal price;
     private Long productId;
     private String productName;
+    private String productBrand;
+
+    // must be getProductBrand not getBrand
+    public String getProductBrand() {
+        return productBrand;
+    }
+
+    public void setProductBrand(String productBrand) {
+        this.productBrand = productBrand;
+    }
 
     public int getQuantity() {
         return quantity;
