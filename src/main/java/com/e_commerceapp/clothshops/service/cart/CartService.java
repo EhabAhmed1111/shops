@@ -48,20 +48,27 @@ public class CartService {
     }
 
 
-    public Cart getCart(Long id) {
-        return cartRepository.findById(id).orElseThrow(
+    public Cart getCart(Long cartId) {
+        return cartRepository.findById(cartId).orElseThrow(
                 () -> new GlobalNotFoundException(
-                        "there is no cart with id: " + id
+                        "there is no cart with id: " + cartId
                 )
         );
     }
 
 
-    public void clearCart(Long id) {
-        Cart cart = getCart(id);
-        cartItemRepository.deleteAllByCartId(id);
-        cart.getItems().clear();
-        cartRepository.deleteById(id);
+    /*
+        TODO(fixing this method so cart will deleted)
+     */
+    @Transactional
+    public void clearCart(Long cartId) {
+        Cart cart = getCart(cartId);
+        cartItemRepository.deleteAllByCartId(cartId);
+        //here we clear cart item
+        cart.getItems().clear();//Set
+
+        //so why cart not change?->still having same cart item after we make order
+        cartRepository.deleteById(cartId);
     }
 
     public BigDecimal getTotalPrice(Long id) {
@@ -69,11 +76,6 @@ public class CartService {
 
         return cart.getTotalPrice();
     }
-
-
-
-    //TODO(There is an error here we need to handle it)
-    // It show that the cart is not attach to user
 
 
     //here he path user and take id from him
@@ -194,6 +196,7 @@ public class CartService {
 
 
         //here we will get every price for each item and then add all then but it to cart
+        //recalc the total price
         BigDecimal totalPrice = cart.getItems().stream().map(CartItem::getTotalPrice)
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
         cart.setTotalPrice(totalPrice);

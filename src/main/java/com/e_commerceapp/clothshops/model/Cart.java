@@ -1,5 +1,6 @@
 package com.e_commerceapp.clothshops.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
 import java.math.BigDecimal;
@@ -25,6 +26,7 @@ public class Cart {
     //each user has one cart
     @OneToOne
     @JoinColumn(name = "user_id")
+//    @JsonIgnore
     private Users user;
 
     public Cart() {

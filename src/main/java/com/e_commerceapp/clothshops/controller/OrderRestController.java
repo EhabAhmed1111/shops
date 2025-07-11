@@ -30,7 +30,11 @@ public class OrderRestController {
     //should this become pathVariable or RequestParam
     public ResponseEntity<ApiResponse> createOrder(@RequestParam Long userId) {
         try {
-            Orders order = orderService.placeOrder(userId);
+            /*
+            ->instead of doing multi @JsonIgnore we can just make DTO to return what we actually need
+            with causing loops
+             */
+            OrderDTO order = orderService.placeOrder(userId);
             return ResponseEntity.ok(new ApiResponse("order placed", order));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)

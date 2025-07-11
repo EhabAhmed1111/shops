@@ -12,6 +12,7 @@ import com.e_commerceapp.clothshops.repository.OrderRepository;
 import com.e_commerceapp.clothshops.repository.ProductRepository;
 import com.e_commerceapp.clothshops.service.cart.CartService;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -33,8 +34,11 @@ public class OrderService {
         this.orderMapper = orderMapper;
     }
 
-
-    public Orders placeOrder(Long userId) {
+    /*
+        TODO(fixing this method so cart will deleted after order created)
+     */
+    @Transactional
+    public OrderDTO placeOrder(Long userId) {
 
         Cart cart = cartService.getCartByUserId(userId);
 
@@ -48,7 +52,7 @@ public class OrderService {
         Orders savedOrder = orderRepository.save(order);
         cartService.clearCart(cart.getId());
 
-        return savedOrder;
+        return convertToDTO(savedOrder);
     }
 
     private Orders createOrder(Cart cart) {
@@ -71,7 +75,7 @@ public class OrderService {
                     return new OrderItem(
                             order,
                             product,
-                            item.getUnitePrice(),
+                            item.getTotalPrice(),
                             item.getQuantity()
                     );
                 }
