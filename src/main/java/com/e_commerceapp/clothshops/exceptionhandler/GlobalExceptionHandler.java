@@ -46,17 +46,7 @@ public class GlobalExceptionHandler {
 
         return new ResponseEntity<>(error, HttpStatus.INTERNAL_SERVER_ERROR);
     }
-//    @ExceptionHandler
-//    public ResponseEntity<GlobalErrorResponse> handleAlreadyExistException(ImageUploadException exc){
-//
-//        GlobalErrorResponse error = new GlobalErrorResponse();
-//
-//        error.setStatus(HttpStatus.BAD_REQUEST.value());
-//        error.setMessage(exc.getMessage());
-//        error.setTimeStamp(System.currentTimeMillis());
-//
-//        return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
-//    }
+
 
     @ExceptionHandler
     public ResponseEntity<GlobalErrorResponse> handleException(Exception exc){

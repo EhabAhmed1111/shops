@@ -1,10 +1,9 @@
 package com.e_commerceapp.clothshops.service.product;
 
 import com.e_commerceapp.clothshops.mapper.ProductMapper;
-import com.e_commerceapp.clothshops.model.Product;
-import com.e_commerceapp.clothshops.repository.CategoryRepository;
-import com.e_commerceapp.clothshops.repository.ImageRepository;
-import com.e_commerceapp.clothshops.repository.ProductRepository;
+import com.e_commerceapp.clothshops.data.model.Product;
+import com.e_commerceapp.clothshops.data.repository.CategoryRepository;
+import com.e_commerceapp.clothshops.data.repository.ProductRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
@@ -13,13 +12,10 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.Mockito.verify;
 
 

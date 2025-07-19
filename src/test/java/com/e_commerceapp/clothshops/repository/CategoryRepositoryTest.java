@@ -1,6 +1,7 @@
 package com.e_commerceapp.clothshops.repository;
 
-import com.e_commerceapp.clothshops.model.Category;
+import com.e_commerceapp.clothshops.data.model.Category;
+import com.e_commerceapp.clothshops.data.repository.CategoryRepository;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
