@@ -1,14 +1,12 @@
 package com.e_commerceapp.clothshops.data;
 
-import com.e_commerceapp.clothshops.model.Users;
-import com.e_commerceapp.clothshops.repository.UserRepository;
-import org.apache.catalina.User;
+import com.e_commerceapp.clothshops.data.model.Users;
+import com.e_commerceapp.clothshops.data.repository.UserRepository;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.ApplicationListener;
 import org.springframework.stereotype.Component;
 
-@Component  // Do not forget component
-//this one to make action when application run
+@Component
 public class DataInitializer implements ApplicationListener<ApplicationReadyEvent> {
 
     private final UserRepository userRepository;
@@ -18,7 +16,6 @@ public class DataInitializer implements ApplicationListener<ApplicationReadyEven
     }
     @Override
     public void onApplicationEvent(ApplicationReadyEvent event) {
-        // here we will create 5 user when app run to help in test
         createNew5DefaultUsersIfNotExist();
     }
 

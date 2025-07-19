@@ -1,7 +1,7 @@
 package com.e_commerceapp.clothshops.service.cart;
 
-import com.e_commerceapp.clothshops.repository.CartItemRepository;
-import com.e_commerceapp.clothshops.repository.CartRepository;
+import com.e_commerceapp.clothshops.data.repository.CartItemRepository;
+import com.e_commerceapp.clothshops.data.repository.CartRepository;
 import com.e_commerceapp.clothshops.service.product.IProductService;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;

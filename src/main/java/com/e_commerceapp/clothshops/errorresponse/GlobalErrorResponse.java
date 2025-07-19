@@ -1,9 +1,5 @@
 package com.e_commerceapp.clothshops.errorresponse;
 
-//@Getter
-//@Setter
-//@NoArgsConstructor
-//@AllArgsConstructor
 public class GlobalErrorResponse {
 
     private int status;

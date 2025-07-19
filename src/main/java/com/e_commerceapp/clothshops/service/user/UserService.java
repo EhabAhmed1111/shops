@@ -1,13 +1,13 @@
 package com.e_commerceapp.clothshops.service.user;
 
-import com.e_commerceapp.clothshops.dto.UserDTO;
+import com.e_commerceapp.clothshops.data.dto.UserDTO;
 import com.e_commerceapp.clothshops.exceptionhandler.AlreadyExistException;
 import com.e_commerceapp.clothshops.exceptionhandler.GlobalNotFoundException;
 import com.e_commerceapp.clothshops.mapper.UserMapper;
-import com.e_commerceapp.clothshops.model.Users;
-import com.e_commerceapp.clothshops.repository.UserRepository;
-import com.e_commerceapp.clothshops.requests.CreateUserReq;
-import com.e_commerceapp.clothshops.requests.UserUpdateReq;
+import com.e_commerceapp.clothshops.data.model.Users;
+import com.e_commerceapp.clothshops.data.repository.UserRepository;
+import com.e_commerceapp.clothshops.rest.requests.CreateUserReq;
+import com.e_commerceapp.clothshops.rest.requests.UserUpdateReq;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -30,7 +30,6 @@ public class UserService {
                         "there is no user with id: " + userId
                 )
         );
-//        return userMapper.createUserDtoFromUserEntity(user);
     }
 
     public UserDTO createUser(CreateUserReq createUserReq) {
@@ -68,7 +67,6 @@ public class UserService {
 
 
     public void deleteUser(Long userId) {
-//        userRepository.delete(getUserById(userId));
 
         userRepository.findById(userId).ifPresentOrElse(userRepository::delete,
                 () -> {

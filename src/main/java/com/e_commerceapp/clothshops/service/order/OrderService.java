@@ -1,15 +1,15 @@
 package com.e_commerceapp.clothshops.service.order;
 
-import com.e_commerceapp.clothshops.dto.OrderDTO;
-import com.e_commerceapp.clothshops.enums.OrderStatus;
+import com.e_commerceapp.clothshops.data.dto.OrderDTO;
+import com.e_commerceapp.clothshops.data.enums.OrderStatus;
 import com.e_commerceapp.clothshops.exceptionhandler.GlobalNotFoundException;
 import com.e_commerceapp.clothshops.mapper.OrderMapper;
-import com.e_commerceapp.clothshops.model.Cart;
-import com.e_commerceapp.clothshops.model.OrderItem;
-import com.e_commerceapp.clothshops.model.Orders;
-import com.e_commerceapp.clothshops.model.Product;
-import com.e_commerceapp.clothshops.repository.OrderRepository;
-import com.e_commerceapp.clothshops.repository.ProductRepository;
+import com.e_commerceapp.clothshops.data.model.Cart;
+import com.e_commerceapp.clothshops.data.model.OrderItem;
+import com.e_commerceapp.clothshops.data.model.Orders;
+import com.e_commerceapp.clothshops.data.model.Product;
+import com.e_commerceapp.clothshops.data.repository.OrderRepository;
+import com.e_commerceapp.clothshops.data.repository.ProductRepository;
 import com.e_commerceapp.clothshops.service.cart.CartService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -60,7 +60,6 @@ public class OrderService {
         order.setUser(cart.getUser());
         order.setOrderStatus(OrderStatus.PENDING);
         order.setOrderDate(LocalDate.now());
-//        order.setTotalPrice(cart.getTotalPrice());
 
         return order;
 
@@ -94,7 +93,6 @@ public class OrderService {
                         "there is no order with id: " + orderId
                 )
         );
-//        return convertToDTO(order);
     }
 
     public List<OrderDTO> getUserOrder(Long userId) {
